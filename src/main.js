@@ -118,7 +118,42 @@ function topicCard(t) { const s = sector(t.sector); const complete = state.compl
 
 function roadmap() { const weeks = [['01–02','기초 기반','네트워크·로그·보안 운영의 공통 언어를 회복합니다.',['TCP/IP 4계층','DNS와 HTTP 흐름','로그 수집과 기준선','정책 배포 절차']],['03–05','솔루션 운영','단말과 네트워크 보안 장비의 운영 흐름을 익힙니다.',['EDR 운영 모델','백신 정책과 예외','Firewall 정책 설계','VPN 인증·터널','WAF 요청 분석']],['06–08','장애·고객 대응','트리아지, RCA, SLA와 기술 협의를 훈련합니다.',['장애 트리아지','원인 분석 RCA','B2B 이슈 접수','SLA와 우선순위','정기 운영 보고']],['09–10','자동화·문서화','정책 검증과 반복 업무 자동화 산출물을 만듭니다.',['운영 자동화 원칙','로그 검색 쿼리','정책 검증 스크립트','SOP와 증적']],['11–12','취업 실전','경험을 경력기술서와 기술면접 답변으로 전환합니다.',['경력기술서 구조','기술면접 대비','자격증 로드맵','12주 포트폴리오']]]; return appShell(`<section class="page fade-in"><div class="page-title"><div><span class="eyebrow">FIELD TRAINING / 12 WEEKS</span><h1>12주 로드맵</h1><p>매주 하나의 운영 산출물을 남기며 공백기를 실무 언어로 바꿉니다.</p></div></div><div class="roadmap">${weeks.map((w,i) => `<div class="roadmap-row"><div class="week-marker"><span>PHASE ${String(i+1).padStart(2,'0')}</span><strong>${w[0]}</strong></div><div class="roadmap-content"><div><span class="eyebrow">${w[1]}</span><h2>${w[2]}</h2></div><div class="roadmap-topics">${w[3].map((name) => {const t=topics.find(x=>x.title===name); return t ? `<button data-topic="${t.id}" class="roadmap-topic ${state.completed[t.id]?'done':''}"><i>${state.completed[t.id]?'✓':'○'}</i>${name}<span>→</span></button>` : ''}).join('')}</div></div></div>`).join('')}</div></section>`) }
 
-function matrix() { const rows = [['EDR·백신·DLP·NAC','endpoint','탐지·정책·예외·격리 운영'],['정책 배포·예외·변경관리','policy','승인·테스트·롤백·증적'],['Firewall·IPS·VPN·WAF','network-security','접근제어·탐지·터널·웹 요청'],['장애 분석·트러블슈팅','incident','로그·트리아지·RCA·재발방지'],['B2B 운영 지원·기술 협의','customer','SLA·회의록·에스컬레이션'],['정기 보고·문서화','customer','KPI·위험·조치·다음 계획'],['운영 자동화','automation','쿼리·검증·스크립트·가드레일']]; return appShell(`<section class="page fade-in"><div class="page-title"><div><span class="eyebrow">JOB DESCRIPTION / MAPPING</span><h1>역량 매트릭스</h1><p>채용공고의 요구사항을 실제 학습 주제와 운영 증거에 매핑했습니다.</p></div></div><div class="panel matrix-panel"><div class="matrix-header"><span>채용 요구사항</span><span>학습 섹터</span><span>준비할 증거</span><span>상태</span></div>${rows.map(([req,sec,evidence])=>{const s=sector(sec);const related=topics.filter(t=>t.sector===sec);const done=related.filter(t=>state.completed[t.id]).length; return `<div class="matrix-row"><strong>${req}</strong><span class="matrix-sector"><i class="sector-icon ${s.color}">${s.icon}</i>${s.title}</span><span>${evidence}</span><span class="matrix-status ${done===related.length?'ready':''}">${done===related.length?'READY':`${done}/${related.length}`}</span></div>`}).join('')}</div><div class="callout"><span>◎</span><div><b>면접에서 보여줄 운영 증거</b><p>정책 변경서, 장애 RCA, 월간 운영 보고서, 로그 분석 쿼리, 예외 승인 기록을 포트폴리오 형태로 축적하세요.</p></div></div></section>`) }
+const jobProfiles = [
+  {
+    id: 'job-a', badge: '공고 A / 보안솔루션 운영·유지보수', title: '단말·네트워크 보안솔루션 운영형', summary: 'NAC·방화벽·VPN·nDLP와 EPP·안티 랜섬웨어·PMS·eDLP·DRM·망연계솔루션을 운영하고, 웹쉘 탐지·개인정보 접근 이력관리와 금융보안 규제 대응까지 수행하는 포지션입니다.',
+    tags: ['NAC', 'FW/VPN', 'nDLP·eDLP', 'EPP·DRM', '금융보안·전자금융거래법', 'AWS'],
+    skills: [
+      ['단말 보안 제품 운영', 'endpoint', 'EDR 운영 모델', '탐지 이벤트·정책·예외·격리 대응 기록'],
+      ['네트워크 접근제어', 'network-security', 'VPN 인증·터널', '인증 성공 후 내부망 미접속 장애 분석서'],
+      ['DLP·개인정보 통제', 'endpoint', 'DLP 데이터 흐름', '데이터·사용자·채널별 차단/예외 판단표'],
+      ['변경·규제 준수', 'policy', 'SOP와 증적', '전자금융·금융보안 점검 대응 증적 목록'],
+      ['웹쉘·침해 징후 대응', 'incident', '장애 트리아지', '탐지부터 격리·복구까지의 타임라인'],
+    ],
+    preferred: '정보보안기사·CISSP·CISA, 보안솔루션 구축·운영, AWS 클라우드 보안 경험'
+  },
+  {
+    id: 'job-b', badge: '공고 B / 신세계아이앤씨 정보보안', title: '하이브리드 보안 인프라·거버넌스형', summary: '내·외부 위협 식별과 개선, IT 보안시스템 기획·구축·운영, 애플리케이션 취약점 관리, 24×365 관제·침해사고 대응, 개인정보·ISMS·감사·보안인식까지 연결하는 포지션입니다.',
+    tags: ['하이브리드 인프라', 'PoC/BMT', '취약점 관리', '24×365 관제', 'ISMS·감사', '보안인식'],
+    skills: [
+      ['보안 인프라 아키텍처', 'network-security', 'Firewall 정책 설계', '온프레미스·클라우드 경계와 최소권한 설계도'],
+      ['솔루션 도입·고도화', 'automation', '운영 자동화 포트폴리오', 'PoC/BMT 평가표와 도입 후 KPI'],
+      ['취약점·위협 개선', 'incident', '원인 분석 RCA', '취약점 영향도·조치기한·재검증 보고서'],
+      ['관제·침해사고 대응', 'incident', '사고 후 개선', '24×365 에스컬레이션·RCA·재발방지 계획'],
+      ['ISMS·감사·개인정보', 'policy', 'SOP와 증적', '관리체계 증적·내외부 점검 대응 체크리스트'],
+      ['조직 보안 커뮤니케이션', 'customer', '기술 협의 진행', '보안인식 교육안과 의사결정 회의록'],
+    ],
+    preferred: '보안인프라 설계·구축·운영, 대규모 조직 경험, ISA·CISSP·CPPG·정보보안기사 등'
+  }
+]
+
+function jobProfileCard(profile) {
+  return `<article class="job-profile"><div class="job-profile-head"><span class="eyebrow">${profile.badge}</span><span class="job-profile-mark">JD</span></div><h2>${profile.title}</h2><p class="job-summary">${profile.summary}</p><div class="job-tags">${profile.tags.map((tag) => `<span>${tag}</span>`).join('')}</div><div class="job-skill-list"><div class="job-skill-head"><span>필요 역량</span><span>학습 연결</span></div>${profile.skills.map(([label, sec, topicTitle, evidence]) => { const t = topics.find((item) => item.title === topicTitle); const s = sector(sec); return `<div class="job-skill-row"><div><strong>${label}</strong><small>${evidence}</small></div><button class="job-topic-link" data-topic="${t.id}"><i class="sector-icon ${s.color}">${s.icon}</i>${topicTitle} ↗</button></div>` }).join('')}</div><div class="job-preferred"><b>우대·확장 역량</b><p>${profile.preferred}</p></div></article>`
+}
+
+function matrix() {
+  const rows = [['EDR·백신·DLP·NAC','endpoint','탐지·정책·예외·격리 운영'],['정책 배포·예외·변경관리','policy','승인·테스트·롤백·증적'],['Firewall·IPS·VPN·WAF','network-security','접근제어·탐지·터널·웹 요청'],['장애 분석·트러블슈팅','incident','로그·트리아지·RCA·재발방지'],['B2B 운영 지원·기술 협의','customer','SLA·회의록·에스컬레이션'],['정기 보고·문서화','customer','KPI·위험·조치·다음 계획'],['운영 자동화','automation','쿼리·검증·스크립트·가드레일']]
+  return appShell(`<section class="page fade-in"><div class="page-title"><div><span class="eyebrow">JOB DESCRIPTION / MAPPING</span><h1>역량 매트릭스</h1><p>두 채용공고의 요구사항을 공통 역량과 공고별 학습 경로로 분해했습니다.</p></div></div><div class="job-profile-grid">${jobProfiles.map(jobProfileCard).join('')}</div><div class="section-heading job-matrix-heading"><div><span class="eyebrow">COMMON REQUIREMENTS</span><h2>공통 채용요건 매핑</h2></div><span class="live-tag"><i></i> TOPIC LINKED</span></div><div class="panel matrix-panel"><div class="matrix-header"><span>채용 요구사항</span><span>학습 섹터</span><span>준비할 증거</span><span>상태</span></div>${rows.map(([req,sec,evidence])=>{const s=sector(sec);const related=topics.filter(t=>t.sector===sec);const done=related.filter(t=>state.completed[t.id]).length; return `<div class="matrix-row"><strong>${req}</strong><span class="matrix-sector"><i class="sector-icon ${s.color}">${s.icon}</i>${s.title}</span><span>${evidence}</span><span class="matrix-status ${done===related.length?'ready':''}">${done===related.length?'READY':`${done}/${related.length}`}</span></div>`}).join('')}</div><div class="callout"><span>◎</span><div><b>면접에서 보여줄 운영 증거</b><p>정책 변경서, 장애 RCA, 월간 운영 보고서, 로그 분석 쿼리, 예외 승인 기록, PoC/BMT 평가표, ISMS·감사 증적을 포트폴리오 형태로 축적하세요.</p></div></div></section>`)
+}
 
 function examPage() {
   const list = state.examFilter === '전체' ? examQuestions : examQuestions.filter((q) => q.sector === state.examFilter); const q = list[state.examIndex % list.length]; const result = state.examAnswers[q.id]; const s = sector(q.sector); const solved = Object.values(state.examAnswers).filter((a) => a.solved).length; const correct = Object.values(state.examAnswers).filter((a) => a.correct).length;
