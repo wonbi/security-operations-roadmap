@@ -88,6 +88,37 @@ const state = {
   examFilter: '전체', examIndex: 0, examAnswers: JSON.parse(localStorage.getItem('secops-exam') || '{}'),
 }
 
+function routeSnapshot() {
+  return { page: state.page, search: state.search, filter: state.filter, selectedTopic: state.selectedTopic, examFilter: state.examFilter, examIndex: state.examIndex }
+}
+
+function routeUrl() {
+  const url = new URL(window.location.href)
+  ;['page', 'topic', 'filter', 'q'].forEach((key) => url.searchParams.delete(key))
+  if (state.page !== 'dashboard') url.searchParams.set('page', state.page)
+  if (state.page === 'study' && state.selectedTopic) url.searchParams.set('topic', state.selectedTopic)
+  if (state.page === 'learn' && state.filter !== '전체') url.searchParams.set('filter', state.filter)
+  if (state.page === 'exam') {
+    if (state.examFilter !== '전체') url.searchParams.set('filter', state.examFilter)
+    if (state.examIndex) url.searchParams.set('q', String(state.examIndex))
+  }
+  return `${url.pathname}${url.search}${url.hash}`
+}
+
+function syncRoute(replace = false) {
+  window.history[replace ? 'replaceState' : 'pushState'](routeSnapshot(), '', routeUrl())
+}
+
+function restoreRoute(route = {}) {
+  const validPages = ['dashboard', 'learn', 'study', 'exam', 'roadmap', 'matrix', 'refs']
+  state.page = validPages.includes(route.page) ? route.page : 'dashboard'
+  state.selectedTopic = topics.some((t) => t.id === route.selectedTopic) ? route.selectedTopic : null
+  state.search = typeof route.search === 'string' ? route.search : ''
+  state.filter = route.filter || '전체'
+  state.examFilter = route.examFilter || '전체'
+  state.examIndex = Number.isFinite(Number(route.examIndex)) ? Number(route.examIndex) : 0
+}
+
 const save = () => { localStorage.setItem('secops-completed', JSON.stringify(state.completed)); localStorage.setItem('secops-notes', JSON.stringify(state.notes)) }
 const esc = (value) => String(value).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))
 const sector = (id) => sectorMeta.find((item) => item.id === id)
@@ -268,8 +299,27 @@ const examQuestions = [
 
 function studyDiagram(guide) { return `<div class="study-flow">${guide.flow.map((step, i) => `<div class="flow-node"><span>${String(i + 1).padStart(2, '0')}</span><b>${step}</b></div>${i < guide.flow.length - 1 ? '<i class="flow-arrow">→</i>' : ''}`).join('')}</div>` }
 
-function openTopic(id) { if (!topics.some((t) => t.id === id)) return; state.selectedTopic = id; state.page = 'study'; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function openTopic(id) { if (!topics.some((t) => t.id === id)) return; state.selectedTopic = id; state.page = 'study'; syncRoute(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-function bind() { document.querySelectorAll('[data-page]').forEach((el)=>el.addEventListener('click',()=>{state.page=el.dataset.page;render()})); document.querySelectorAll('[data-topic]').forEach((el)=>el.addEventListener('click',()=>openTopic(el.dataset.topic))); document.querySelectorAll('[data-sector]').forEach((el)=>el.addEventListener('click',()=>{state.page='learn';state.filter=el.dataset.sector;render()})); document.querySelectorAll('[data-filter]').forEach((el)=>el.addEventListener('click',()=>{state.filter=el.dataset.filter;render()})); document.querySelectorAll('[data-exam-filter]').forEach((el)=>el.addEventListener('click',()=>{state.examFilter=el.dataset.examFilter;state.examIndex=0;render()})); document.querySelectorAll('[data-answer]').forEach((el)=>el.addEventListener('click',()=>{const list=state.examFilter==='전체'?examQuestions:examQuestions.filter((q)=>q.sector===state.examFilter);const q=list[state.examIndex%list.length];if(state.examAnswers[q.id]?.solved)return;const picked=Number(el.dataset.answer);state.examAnswers[q.id]={picked,solved:true,correct:picked===q.answer};localStorage.setItem('secops-exam',JSON.stringify(state.examAnswers));render()})); const nextQuestion=document.querySelector('[data-next]'); if(nextQuestion) nextQuestion.onclick=()=>{state.examIndex += 1;render()}; document.querySelectorAll('[data-complete]').forEach((el)=>el.addEventListener('click',(e)=>{e.stopPropagation();state.completed[el.dataset.complete]=!state.completed[el.dataset.complete];save();render()})); document.querySelectorAll('[data-check]').forEach((el)=>el.addEventListener('change',(e)=>{state.completed[e.target.dataset.check]=e.target.checked;save()})); const saveNote=document.querySelector('#save-note'); if(saveNote) saveNote.onclick=()=>{const id=state.selectedTopic;state.notes[id]=document.querySelector('#topic-note').value;save();saveNote.textContent='저장 완료 ✓'}; const completeTopic=document.querySelector('#complete-topic'); if(completeTopic) completeTopic.onclick=()=>{const id=state.selectedTopic;state.completed[id]=!state.completed[id];save();render()}; const search=document.querySelector('#search'); if(search){search.addEventListener('input',(e)=>{state.search=e.target.value;const pos=e.target.selectionStart;render();const next=document.querySelector('#search');next.focus();next.setSelectionRange(pos,pos)})} const reset=document.querySelector('#reset-progress'); if(reset) reset.onclick=()=>{if(confirm('모든 학습 진도와 체크리스트를 초기화할까요?')){state.completed={};state.notes={};save();render()}} }
+function bind() {
+  document.querySelectorAll('[data-page]').forEach((el) => el.addEventListener('click', () => { state.page = el.dataset.page; if (state.page !== 'study') state.selectedTopic = null; syncRoute(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }) }))
+  document.querySelectorAll('[data-topic]').forEach((el) => el.addEventListener('click', () => openTopic(el.dataset.topic)))
+  document.querySelectorAll('[data-sector]').forEach((el) => el.addEventListener('click', () => { state.page = 'learn'; state.filter = el.dataset.sector; syncRoute(); render() }))
+  document.querySelectorAll('[data-filter]').forEach((el) => el.addEventListener('click', () => { state.filter = el.dataset.filter; syncRoute(); render() }))
+  document.querySelectorAll('[data-exam-filter]').forEach((el) => el.addEventListener('click', () => { state.examFilter = el.dataset.examFilter; state.examIndex = 0; syncRoute(); render() }))
+  document.querySelectorAll('[data-answer]').forEach((el) => el.addEventListener('click', () => { const list = state.examFilter === '전체' ? examQuestions : examQuestions.filter((q) => q.sector === state.examFilter); const q = list[state.examIndex % list.length]; if (state.examAnswers[q.id]?.solved) return; const picked = Number(el.dataset.answer); state.examAnswers[q.id] = { picked, solved: true, correct: picked === q.answer }; localStorage.setItem('secops-exam', JSON.stringify(state.examAnswers)); render() }))
+  const nextQuestion = document.querySelector('[data-next]'); if (nextQuestion) nextQuestion.onclick = () => { state.examIndex += 1; syncRoute(); render() }
+  document.querySelectorAll('[data-complete]').forEach((el) => el.addEventListener('click', (e) => { e.stopPropagation(); state.completed[el.dataset.complete] = !state.completed[el.dataset.complete]; save(); render() }))
+  document.querySelectorAll('[data-check]').forEach((el) => el.addEventListener('change', (e) => { state.completed[e.target.dataset.check] = e.target.checked; save() }))
+  const saveNote = document.querySelector('#save-note'); if (saveNote) saveNote.onclick = () => { const id = state.selectedTopic; state.notes[id] = document.querySelector('#topic-note').value; save(); saveNote.textContent = '저장 완료 ✓' }
+  const completeTopic = document.querySelector('#complete-topic'); if (completeTopic) completeTopic.onclick = () => { const id = state.selectedTopic; state.completed[id] = !state.completed[id]; save(); render() }
+  const search = document.querySelector('#search'); if (search) { search.addEventListener('input', (e) => { state.search = e.target.value; const pos = e.target.selectionStart; render(); syncRoute(true); const next = document.querySelector('#search'); next.focus(); next.setSelectionRange(pos, pos) }) }
+  const reset = document.querySelector('#reset-progress'); if (reset) reset.onclick = () => { if (confirm('모든 학습 진도와 체크리스트를 초기화할까요?')) { state.completed = {}; state.notes = {}; save(); render() } }
+}
 
+window.addEventListener('popstate', (event) => { restoreRoute(event.state || Object.fromEntries(new URLSearchParams(window.location.search))); render(); window.scrollTo({ top: 0, behavior: 'smooth' }) })
+
+const initialRoute = Object.fromEntries(new URLSearchParams(window.location.search))
+restoreRoute({ page: initialRoute.page, selectedTopic: initialRoute.topic, filter: initialRoute.filter, examFilter: initialRoute.filter, examIndex: initialRoute.q })
+syncRoute(true)
 render()
