@@ -48,3 +48,31 @@ body{font-size:15px}.nav-item b{font-size:13px}.nav-item small{font-size:10px}.h
 .job-profile h2{font-size:24px;line-height:1.35;letter-spacing:-.8px;margin:17px 0 11px}.job-summary{font-size:13px;line-height:1.85;color:#c5d5e1;margin:0}.job-tags{display:flex;gap:7px;flex-wrap:wrap;margin:19px 0}.job-tags span{border:1px solid #2c5267;border-radius:4px;padding:6px 8px;color:var(--cyan);font-size:10px;background:#0c2132}.job-skill-list{border-top:1px solid #25465b;margin-top:20px}.job-skill-head{display:grid;grid-template-columns:1fr 1fr;padding:12px 0;color:var(--muted);font:9px 'DM Mono',monospace}.job-skill-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,.9fr);gap:12px;align-items:center;border-top:1px solid rgba(39,70,91,.7);padding:13px 0}.job-skill-row strong,.job-skill-row small{display:block}.job-skill-row strong{font-size:12px;color:var(--text)}.job-skill-row small{font-size:11px;line-height:1.55;color:var(--muted);margin-top:4px}.job-topic-link{display:flex;align-items:center;gap:8px;text-align:left;border:1px solid #2b5369;border-radius:5px;background:#102d40;color:var(--cyan);padding:8px;font-size:11px;line-height:1.35}.job-topic-link:hover{background:#17455b;border-color:var(--cyan)}.job-topic-link .sector-icon{width:24px;height:24px;font-size:12px}.job-preferred{border-top:1px solid #25465b;margin-top:16px;padding-top:15px}.job-preferred b{font:10px 'DM Mono',monospace;color:var(--amber)}.job-preferred p{font-size:12px;line-height:1.7;color:#bdccda;margin:7px 0 0}.job-matrix-heading{margin-top:12px}.job-matrix-heading h2{font-size:22px}
 @media(max-width:900px){.job-profile-grid{grid-template-columns:1fr}.job-profile h2{font-size:22px}}
 @media(max-width:760px){.job-profile{padding:19px 16px}.job-profile h2{font-size:21px}.job-summary{font-size:13px}.job-skill-row{grid-template-columns:1fr;gap:9px}.job-topic-link{width:100%}.job-matrix-heading{display:block}.job-matrix-heading .live-tag{margin-top:12px}}
+
+/* Global readability pass: use the available desktop width and enlarge every major text block. */
+@media(min-width:1101px){
+  .page{max-width:none;width:100%;padding-left:clamp(28px,3.2vw,64px);padding-right:clamp(28px,3.2vw,64px)}
+  .topbar{padding-left:clamp(28px,3.2vw,64px);padding-right:clamp(28px,3.2vw,64px)}
+  .main{min-width:0}
+  .hero{min-height:380px}.hero p,.page-title p{font-size:17px}.hero h1{font-size:clamp(44px,5vw,76px)}
+  .section-heading h2,.page-title h1{font-size:32px}.panel-head h3,.focus-panel h3{font-size:21px}
+  .stat-card p{font-size:13px}.sector-info b{font-size:14px}.sector-info small{font-size:10px}.sector-row>strong{font-size:13px}
+  .topic-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}.topic-card{padding:22px;min-height:245px}.topic-card h3{font-size:19px}.topic-card p{font-size:14px;line-height:1.8}.card-foot{font-size:10px}
+  .roadmap-content h2{font-size:24px}.roadmap-topic{font-size:14px;padding:15px}.matrix-header{font-size:11px}.matrix-row{font-size:14px;min-height:82px}.matrix-row strong{font-size:14px}.matrix-status{font-size:12px}
+  .ref-card h3{font-size:19px}.ref-card p{font-size:14px}.ref-foot{font-size:10px}.callout b{font-size:15px}.callout p{font-size:13px}
+  .job-profile h2{font-size:27px}.job-summary{font-size:14px}.job-skill-row strong{font-size:14px}.job-skill-row small{font-size:12px}.job-topic-link{font-size:12px}.job-preferred p{font-size:13px}
+  .exam-meta{padding:28px}.exam-tip{font-size:13px}.question-card h2{font-size:clamp(25px,2.5vw,36px)}.choice{font-size:16px;padding:17px}.answer-box p{font-size:14px}.question-actions{font-size:13px}
+}
+
+@media(max-width:1100px) and (min-width:761px){
+  .page{max-width:none;width:100%;padding-left:30px;padding-right:30px}.hero p,.page-title p{font-size:16px}.topic-card h3{font-size:18px}.topic-card p{font-size:13px}.matrix-row{font-size:13px}.ref-card p{font-size:13px}
+}
+
+@media(max-width:760px){
+  body{font-size:16px}.page{width:100%;padding-left:16px;padding-right:16px}.topbar{padding-left:16px;padding-right:16px}
+  .page-title p,.hero p{font-size:15px}.section-heading h2,.page-title h1{font-size:30px}.nav-item b{font-size:13px}
+  .stat-card p{font-size:11px}.sector-info b{font-size:13px}.sector-info small{font-size:9px}.topic-card h3{font-size:19px}.topic-card p{font-size:14px}.card-foot{font-size:10px}
+  .roadmap-content h2{font-size:21px}.roadmap-topic{font-size:14px}.matrix-row{font-size:13px}.matrix-row strong{font-size:14px}.ref-card h3{font-size:20px}.ref-card p{font-size:14px}
+  .job-profile h2{font-size:23px}.job-summary{font-size:14px}.job-skill-row strong{font-size:14px}.job-skill-row small{font-size:12px}.job-topic-link{font-size:13px}.job-preferred p{font-size:13px}
+  .question-card h2{font-size:23px}.choice{font-size:14px}.exam-tip{font-size:13px}
+}
