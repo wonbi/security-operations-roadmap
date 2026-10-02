@@ -9,6 +9,11 @@ const refs = [
   { name: 'TCP/IP Learning Center', org: 'Cloudflare', url: 'https://www.cloudflare.com/learning/ddos/glossary/tcp-ip/', tag: '입문 설명', desc: '비전공자도 이해하기 쉬운 TCP/IP 개념 설명' },
   { name: 'Known Exploited Vulnerabilities', org: 'CISA', url: 'https://www.cisa.gov/known-exploited-vulnerabilities-catalog', tag: '취약점 사례', desc: '실제 공격에 악용된 취약점과 조치 우선순위' },
   { name: 'NIST SP 800-61 Rev. 3', org: 'NIST', url: 'https://csrc.nist.gov/pubs/sp/800/61/r3/final', tag: '사고 대응', desc: '사이버보안 사고 대응 권고사항과 고려사항' },
+  { name: 'FortiGate Administration Guide', org: 'Fortinet', url: 'https://docs.fortinet.com/document/fortigate/7.6.1/administration-guide/383477/summary-of-steps', tag: '방화벽·VPN', desc: '방화벽 정책, 관리망, IPsec VPN 구축·운영 흐름' },
+  { name: 'PAN-OS Security Policy', org: 'Palo Alto Networks', url: 'https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-admin/policy/security-policy', tag: 'NGFW', desc: 'Zone·주소·애플리케이션·사용자·서비스 기반 정책 운영' },
+  { name: 'F5 BIG-IP Documentation', org: 'F5', url: 'https://techdocs.f5.com/', tag: 'ADC·WAF', desc: '애플리케이션 전달, 로드밸런싱과 웹방화벽 운영 자료' },
+  { name: 'Microsoft Defender for Endpoint', org: 'Microsoft Learn', url: 'https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/microsoft-defender-endpoint', tag: 'Endpoint', desc: '단말 텔레메트리, 탐지·대응과 보안 운영 개요' },
+  { name: 'Microsoft Defender for Office 365', org: 'Microsoft Learn', url: 'https://learn.microsoft.com/en-us/defender-office-365/', tag: '메일 보안', desc: '피싱·악성 메일·첨부파일·URL 보호와 조사' },
 ]
 
 const sectorMeta = [
@@ -174,6 +179,19 @@ const jobProfiles = [
       ['조직 보안 커뮤니케이션', 'customer', '기술 협의 진행', '보안인식 교육안과 의사결정 회의록'],
     ],
     preferred: '보안인프라 설계·구축·운영, 대규모 조직 경험, ISA·CISSP·CPPG·정보보안기사 등'
+  },
+  {
+    id: 'job-c', badge: '공고 C / SK 채용 대비', title: '보안 아키텍처·솔루션 구축형', summary: '최신 IT기술을 활용한 보안 아키텍처 설계·구축부터 보안솔루션 기획·정책 적용·성능 최적화·이슈 대응·로그 분석까지 수행하는 포지션입니다. 접근제어, 백신, 웹서버, 메일, 원격접속, 인터넷, 데이터, Endpoint 보안을 폭넓게 다룹니다.',
+    tags: ['보안 아키텍처', '솔루션 구축·운영', '접근제어', '웹·메일 보안', '데이터보안', '글로벌 협업'],
+    skills: [
+      ['아키텍처 설계·연동', 'network', 'TCP/IP 4계층', '사용자·인터넷·보안장비·서버 구간 설계도'],
+      ['접근제어·원격접속', 'network-security', 'VPN 인증·터널', '인증·터널·라우팅·정책 장애 분석서'],
+      ['Endpoint·백신 운영', 'endpoint', 'EDR 운영 모델', '단말 온보딩·탐지·격리·복구 운영표'],
+      ['웹서버·메일·인터넷 보안', 'network-security', 'WAF 요청 분석', 'HTTP/WAF/메일 보안 흐름과 차단 근거'],
+      ['로그 분석·성능 최적화', 'incident', '로그 수집과 기준선', '성능 지표·로그 상관분석·개선 보고서'],
+      ['기획·제안·구축 검증', 'automation', '운영 자동화 포트폴리오', '요구사항·PoC·BMT·전환·운영 KPI'],
+    ],
+    preferred: '정보보안(산업)기사·PIA·ISMS-P 심사원·ISO 27001, 서버·네트워크, 솔루션 구축·제안, 글로벌 커뮤니케이션'
   }
 ]
 
@@ -181,9 +199,20 @@ function jobProfileCard(profile) {
   return `<article class="job-profile"><div class="job-profile-head"><span class="eyebrow">${profile.badge}</span><span class="job-profile-mark">JD</span></div><h2>${profile.title}</h2><p class="job-summary">${profile.summary}</p><div class="job-tags">${profile.tags.map((tag) => `<span>${tag}</span>`).join('')}</div><div class="job-skill-list"><div class="job-skill-head"><span>필요 역량</span><span>학습 연결</span></div>${profile.skills.map(([label, sec, topicTitle, evidence]) => { const t = topics.find((item) => item.title === topicTitle); const s = sector(sec); return `<div class="job-skill-row"><div><strong>${label}</strong><small>${evidence}</small></div><button class="job-topic-link" data-topic="${t.id}"><i class="sector-icon ${s.color}">${s.icon}</i>${topicTitle} ↗</button></div>` }).join('')}</div><div class="job-preferred"><b>우대·확장 역량</b><p>${profile.preferred}</p></div></article>`
 }
 
+function architectureBlueprint() {
+  const layers = [
+    ['사용자·단말', 'Endpoint / EPP / EDR / 백신 / DLP', '인증·단말 상태·데이터 반출'],
+    ['접속 경계', 'NAC / VPN / ZTNA / 접근제어', '신원·기기·위치·정책 평가'],
+    ['인터넷·네트워크', 'Firewall / IPS / DNS / Proxy', '경로·세션·위협 탐지·차단'],
+    ['웹·메일·데이터', 'WAF / Mail Security / DRM / DB·개인정보', '요청·첨부파일·민감정보 통제'],
+    ['관제·관리', 'SIEM / SOAR / 로그 / 티켓 / 리포트', '상관분석·대응·감사·개선'],
+  ]
+  return `<section class="architecture-panel"><div class="section-heading"><div><span class="eyebrow">REFERENCE ARCHITECTURE / CONTROL PLANE</span><h2>보안솔루션 연동 구조</h2></div><span class="live-tag"><i></i> DESIGN → BUILD → OPERATE</span></div><p class="architecture-lead">SK 공고의 “아키텍처 설계·구축·운영”을 하나의 흐름으로 연습할 수 있도록 사용자 요청부터 정책 판단, 보안장비 처리, 로그·관제·개선까지 연결한 공통 구조입니다.</p><div class="architecture-diagram">${layers.map(([name, tools, control], i) => `<div class="architecture-node"><span>${String(i + 1).padStart(2, '0')}</span><strong>${name}</strong><b>${tools}</b><small>${control}</small></div>${i < layers.length - 1 ? '<div class="architecture-arrow">↓</div>' : ''}`).join('')}</div><div class="solution-catalog"><div class="solution-catalog-head"><span>솔루션군</span><span>핵심 학습 질문</span><span>운영 산출물</span></div>${[['접근제어·NAC·VPN','누가, 어떤 단말로, 어느 구간에 접근하는가?','접근정책·예외승인·접속장애 RCA'],['Firewall·IPS·인터넷 보안','어떤 흐름을 어떤 기준으로 허용·차단하는가?','정책설계서·hit count·차단 근거'],['Endpoint·백신·DLP·DRM','단말 행위와 데이터 반출을 어떻게 판단하는가?','탐지분석·격리기록·예외 만료표'],['웹서버·WAF·메일 보안','요청·첨부·URL이 정상인지 어떻게 검증하는가?','WAF 룰 분석·피싱 조사·재현 결과'],['로그·SIEM·관제','여러 장비의 사건을 어떻게 하나의 타임라인으로 묶는가?','상관분석·에스컬레이션·월간 보고']].map((row) => `<div class="solution-catalog-row"><strong>${row[0]}</strong><span>${row[1]}</span><span>${row[2]}</span></div>`).join('')}</div><div class="architecture-note"><b>설계 시 반드시 남길 것</b><span>신뢰경계·데이터 흐름·관리망·장애 우회·로그 위치·성능 병목·롤백 경로·운영 담당자</span></div></section>`
+}
+
 function matrix() {
   const rows = [['EDR·백신·DLP·NAC','endpoint','탐지·정책·예외·격리 운영'],['정책 배포·예외·변경관리','policy','승인·테스트·롤백·증적'],['Firewall·IPS·VPN·WAF','network-security','접근제어·탐지·터널·웹 요청'],['장애 분석·트러블슈팅','incident','로그·트리아지·RCA·재발방지'],['B2B 운영 지원·기술 협의','customer','SLA·회의록·에스컬레이션'],['정기 보고·문서화','customer','KPI·위험·조치·다음 계획'],['운영 자동화','automation','쿼리·검증·스크립트·가드레일']]
-  return appShell(`<section class="page fade-in"><div class="page-title"><div><span class="eyebrow">JOB DESCRIPTION / MAPPING</span><h1>역량 매트릭스</h1><p>두 채용공고의 요구사항을 공통 역량과 공고별 학습 경로로 분해했습니다.</p></div></div><div class="job-profile-grid">${jobProfiles.map(jobProfileCard).join('')}</div><div class="section-heading job-matrix-heading"><div><span class="eyebrow">COMMON REQUIREMENTS</span><h2>공통 채용요건 매핑</h2></div><span class="live-tag"><i></i> TOPIC LINKED</span></div><div class="panel matrix-panel"><div class="matrix-header"><span>채용 요구사항</span><span>학습 섹터</span><span>준비할 증거</span><span>상태</span></div>${rows.map(([req,sec,evidence])=>{const s=sector(sec);const related=topics.filter(t=>t.sector===sec);const done=related.filter(t=>state.completed[t.id]).length; return `<div class="matrix-row"><strong>${req}</strong><span class="matrix-sector"><i class="sector-icon ${s.color}">${s.icon}</i>${s.title}</span><span>${evidence}</span><span class="matrix-status ${done===related.length?'ready':''}">${done===related.length?'READY':`${done}/${related.length}`}</span></div>`}).join('')}</div><div class="callout"><span>◎</span><div><b>면접에서 보여줄 운영 증거</b><p>정책 변경서, 장애 RCA, 월간 운영 보고서, 로그 분석 쿼리, 예외 승인 기록, PoC/BMT 평가표, ISMS·감사 증적을 포트폴리오 형태로 축적하세요.</p></div></div></section>`)
+  return appShell(`<section class="page fade-in"><div class="page-title"><div><span class="eyebrow">JOB DESCRIPTION / MAPPING</span><h1>역량 매트릭스</h1><p>세 채용공고의 요구사항을 공통 역량과 공고별 학습 경로로 분해했습니다.</p></div></div><div class="job-profile-grid">${jobProfiles.map(jobProfileCard).join('')}</div>${architectureBlueprint()}<div class="section-heading job-matrix-heading"><div><span class="eyebrow">COMMON REQUIREMENTS</span><h2>공통 채용요건 매핑</h2></div><span class="live-tag"><i></i> TOPIC LINKED</span></div><div class="panel matrix-panel"><div class="matrix-header"><span>채용 요구사항</span><span>학습 섹터</span><span>준비할 증거</span><span>상태</span></div>${rows.map(([req,sec,evidence])=>{const s=sector(sec);const related=topics.filter(t=>t.sector===sec);const done=related.filter(t=>state.completed[t.id]).length; return `<div class="matrix-row"><strong>${req}</strong><span class="matrix-sector"><i class="sector-icon ${s.color}">${s.icon}</i>${s.title}</span><span>${evidence}</span><span class="matrix-status ${done===related.length?'ready':''}">${done===related.length?'READY':`${done}/${related.length}`}</span></div>`}).join('')}</div><div class="callout"><span>◎</span><div><b>면접에서 보여줄 운영 증거</b><p>정책 변경서, 장애 RCA, 월간 운영 보고서, 로그 분석 쿼리, 예외 승인 기록, PoC/BMT 평가표, ISMS·감사 증적을 포트폴리오 형태로 축적하세요.</p></div></div></section>`)
 }
 
 function examPage() {
