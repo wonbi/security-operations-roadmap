@@ -1,5 +1,3 @@
-import './styles.css'
-
 const refs = [
   { name: 'NIST Cybersecurity Framework 2.0', org: 'NIST', url: 'https://www.nist.gov/cyberframework', tag: '프레임워크', desc: '보안 위험을 식별하고 우선순위를 정하는 공통 언어' },
   { name: 'KISA ISMS-P', org: 'KISA', url: 'https://isms.kisa.or.kr/', tag: '국내 기준', desc: '국내 정보보호·개인정보보호 관리체계 공식 자료' },
