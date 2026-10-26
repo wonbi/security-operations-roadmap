@@ -1,0 +1,14 @@
+{
+  "name": "SECOPS FIELD GUIDE",
+  "short_name": "SECOPS",
+  "description": "정보보안 솔루션 운영과 네트워크 보안을 공부하는 학습 포털",
+  "lang": "ko",
+  "start_url": "./?page=dashboard",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#07111f",
+  "theme_color": "#07111f",
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
